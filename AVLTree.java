@@ -1,6 +1,6 @@
 
 /*
- * *** YOUR NAME GOES HERE / YOUR SECTION NUMBER ***
+ * *** Pamela Mensah / 002 ***
  *
  * This java file is a Java object implementing simple AVL Tree.
  * You are to complete the deleteElement method.
@@ -342,28 +342,69 @@ class LUC_AVLTree {
      */
 
     private Node deleteElement(int value, Node node) {
+        if (node == null) return null;
 
-        /*
-         * ADD CODE HERE
-         * 
-         * NOTE, that you should use the existing coded private methods
-         * in this file, which include:
-         *      - minValueNode,
-         *      - getMaxHeight,
-         *      - getHeight,
-         *      - getBalanceFactor,
-         *      - LLRotation
-         *      - RRRotation,
-         *      - LRRotation,
-         *      - RLRotation.
-         *
-         * To understand what each of these methods do, see the method prologues and
-         * code for each. You can also look at the method InsertElement, as it has do
-         * do many of the same things as this method.
-         */
+        // search for the node
+        if (value < node.value) {
+            node.leftChild = deleteElement(value, node.leftChild);
+        } else if (value > node.value) {
+            node.rightChild = deleteElement(value, node.rightChild);
+        } else {
+            // found it
+            if (node.leftChild == null && node.rightChild == null) {
+                return null; // no children
+            } else if (node.leftChild == null) {
+                return node.rightChild; // only right
+            } else if (node.rightChild == null) {
+                return node.leftChild; // only left
+            } else {
+                // two children
+                Node succ = minValueNode(node.rightChild);
+                node.value = succ.value;
+                node.rightChild = deleteElement(succ.value, node.rightChild);
+            }
+        }
+
+        // update height
+        node.height = getMaxHeight(getHeight(node.leftChild), getHeight(node.rightChild)) + 1;
+
+        // balance check
+        int bf = getBalanceFactor(node);
+
+        if (bf > 1) {
+            if (getBalanceFactor(node.leftChild) >= 0) {
+                node = LLRotation(node);
+            } else {
+                node = LRRotation(node);
+            }
+        } else if (bf < -1) {
+            if (getBalanceFactor(node.rightChild) <= 0) {
+                node = RRRotation(node);
+            } else {
+                node = RLRotation(node);
+            }
+        }
 
         return node;
     }
+   
+     /** 
+     * NOTE, that you should use the existing coded private methods
+     * in this file, which include:
+     *      - minValueNode,
+     *      - getMaxHeight,
+     *      - getHeight,
+     *      - getBalanceFactor,
+     *      - LLRotation
+     *      - RRRotation,
+     *      - LRRotation,
+     *      - RLRotation.
+     *
+     * To understand what each of these methods do, see the method prologues and
+     * code for each. You can also look at the method InsertElement, as it has do
+     * do many of the same things as this method.
+     */
+
 
 
     /**
